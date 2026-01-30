@@ -13,37 +13,51 @@ public static class DirectionRandomizer
     
     public static Vector3 Randomize4Dir(Vector3 direction)
     {
-        float originalMag = direction.magnitude;
-
-        Vector3 right = Vector3.Cross(Vector3.up, direction).normalized;
-        
         Vector3 resultDir;
-
+        
+        var camT = MonoSingleton<CameraController>.Instance.transform;
+        
         switch ((Direction)randomDirection)
         {
             case Direction.Upwards:
-                resultDir = Quaternion.AngleAxis(-90, right) * direction;
+                resultDir = camT.up;
                 break;
             case Direction.Backwards:
                 resultDir = -direction;
                 break;
             case Direction.Right:
-                resultDir = Quaternion.AngleAxis(90, Vector3.up) * direction;
-                resultDir.y = -resultDir.y;
+                if (Mathf.Abs(Vector3.Dot(direction.normalized, Vector3.up)) > 0.94f)
+                    resultDir = Quaternion.AngleAxis(90, camT.up) * direction;
+                else
+                {
+                    resultDir = Quaternion.AngleAxis(90, Vector3.up) * direction;
+                    resultDir.y = -resultDir.y;
+                }
                 break;
             case Direction.Left:
-                resultDir = Quaternion.AngleAxis(-90, Vector3.up) * direction;
-                resultDir.y = -resultDir.y;
+                if (Mathf.Abs(Vector3.Dot(direction.normalized, Vector3.up)) > 0.94f)
+                {
+                    resultDir = Quaternion.AngleAxis(-90, camT.up) * direction;
+                    resultDir.y = -resultDir.y;
+                }
+                else
+                {
+                    resultDir = Quaternion.AngleAxis(-90, Vector3.up) * direction;
+                    resultDir.y = -resultDir.y;
+                }
+
                 break;
             default:
                 resultDir = direction;
-                LogHelper.LogDebug("FUCK IENUMERATOR");
+                LogHelper.LogDebug("[greycsont] FUCK IENUMERATOR");
                 break;
         }
-
-        LogHelper.LogDebug($"Direction: {(Direction)randomDirection}");
         
-        return resultDir.normalized * originalMag;;
+        LogHelper.LogDebug($"[greycsont] Direction: {(Direction)randomDirection}");
+        LogHelper.LogDebug($"[greycsont] input: {direction.x} {direction.y} {direction.z}");
+        LogHelper.LogDebug($"[greycsont] resultDir: {resultDir.x} {resultDir.y} {resultDir.z}");
+        
+        return resultDir;;
     }
 }
 

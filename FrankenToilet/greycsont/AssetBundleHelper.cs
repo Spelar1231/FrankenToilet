@@ -22,5 +22,4 @@ public static class AssetBundleHelper
         
         return AssetBundle.LoadFromStream(stream);;
     }
-
 }
