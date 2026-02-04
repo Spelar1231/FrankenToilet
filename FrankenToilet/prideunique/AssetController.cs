@@ -57,7 +57,7 @@ public static class AssetsController
             if (_assets != null) return;
 
             _assets = AssetBundle.LoadFromMemory(data);
-            .ogInfo("Loaded assets");
+            LogInfo("Loaded assets");
         };
     }
 

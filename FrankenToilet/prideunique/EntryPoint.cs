@@ -31,6 +31,7 @@ public static class EntryPoint
     {
         LogInfo("Loading");
 
+        AssetsController.Init();
         LoadSoundAndMusicAddressables();
 
         SceneManager.sceneLoaded += (scene, lcm) =>
