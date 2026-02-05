@@ -9,11 +9,13 @@ namespace FrankenToilet.duviz;
 public class HealthRemover : MonoBehaviour
 {
     public static float percentage;
+    public static bool dead;
 
     public void Update()
     {
-        if (NewMovement.instance == null) { percentage = 0; return; }
+        if (NewMovement.instance == null) { dead = false; percentage = 0; return; }
         if (!NewMovement.instance.activated) { percentage = 0; return; }
+        if (NewMovement.instance.activated && Time.timeScale > 0) { dead = false; return; }
     }
 }
 
@@ -40,7 +42,7 @@ public class NewMovementHurtPatch
     {
         HealthRemover.percentage = Mathf.Min(damage + UnityEngine.Random.Range(0, 1f) + HealthRemover.percentage, 5000) * 1.5f;
         damage *= (int)MathF.Min(HealthRemover.percentage / 75 + 1, 100000);
-        if (HealthRemover.percentage > 1000 && damage < 10000)
+        if (HealthRemover.percentage > 1000 && !HealthRemover.dead)
             damage = 0;
     }
     [HarmonyPostfix]
@@ -48,8 +50,9 @@ public class NewMovementHurtPatch
     {
         NewMovement.instance.rb.velocity += new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)) * HealthRemover.percentage; ;
 
-        if (HealthRemover.percentage > 1000 && !__instance.dead)
+        if (HealthRemover.percentage > 1000 && !__instance.dead && !HealthRemover.dead)
         {
+            HealthRemover.dead = true;
             TimeController.instance.ParryFlash();
             DeltaruneExplosion.ExplodePlayer();
         }
